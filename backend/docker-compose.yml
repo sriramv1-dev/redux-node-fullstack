@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo
+    container_name: redux-node-mongodb
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongodb_data_RNMC:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}    
+      TZ: America/New_York
+    restart: always
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data_RNMC:
+
+networks:
+  app-network:
+    driver: bridge
