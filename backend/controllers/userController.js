@@ -7,60 +7,53 @@ const getAllUsers = async (req, res) => {
     return res.status(200).json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
-    res
+    return res
       .status(500)
       .json({ message: "Failed to fetch users", error: error.message });
   }
-  //   return res.status(200).json([
-  //     {
-  //       id: 1,
-  //       name: "Leanne Graham",
-  //       username: "Bret",
-  //       email: "Sincere@april.biz",
-  //       address: {
-  //         street: "Kulas Light",
-  //         suite: "Apt. 556",
-  //         city: "Gwenborough",
-  //         zipcode: "92998-3874",
-  //         geo: {
-  //           lat: "-37.3159",
-  //           lng: "81.1496",
-  //         },
-  //       },
-  //       phone: "1-770-736-8031 x56442",
-  //       website: "hildegard.org",
-  //       company: {
-  //         name: "Romaguera-Crona",
-  //         catchPhrase: "Multi-layered client-server neural-net",
-  //         bs: "harness real-time e-markets",
-  //       },
-  //     },
-  //     {
-  //       id: 2,
-  //       name: "Ervin Howell",
-  //       username: "Antonette",
-  //       email: "Shanna@melissa.tv",
-  //       address: {
-  //         street: "Victor Plains",
-  //         suite: "Suite 879",
-  //         city: "Wisokyburgh",
-  //         zipcode: "90566-7771",
-  //         geo: {
-  //           lat: "-43.9509",
-  //           lng: "-34.4618",
-  //         },
-  //       },
-  //       phone: "010-692-6593 x09125",
-  //       website: "anastasia.net",
-  //       company: {
-  //         name: "Deckow-Crist",
-  //         catchPhrase: "Proactive didactic contingency",
-  //         bs: "synergize scalable supply-chains",
-  //       },
-  //     },
-  //   ]);
+};
+
+const addBulkUsers = async (req, res) => {
+  try {
+    const users = req.body.users;
+
+    if (!Array.isArray(users) || users.length === 0) {
+      return res.status(400).json({
+        message: "Request body must be a non-empty array of user objects.",
+      });
+    }
+
+    const insertedUsers = await User.insertMany(users);
+
+    return res.status(201).json({
+      message: "Users added successfully",
+      count: insertedUsers.length,
+      users: insertedUsers,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+
+    if (error.name === "ValidationError") {
+      return res
+        .status(400)
+        .json({ message: "Validation error", errors: error.errors });
+    }
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message:
+          "Duplicate key error: A user with the provided username or email already exists.",
+        error: error.message,
+      });
+    }
+
+    res
+      .status(500)
+      .json({ message: "Failed to add multiple users", error: error.message });
+  }
 };
 
 module.exports = {
+  addBulkUsers,
   getAllUsers,
 };

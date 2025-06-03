@@ -10,7 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 5051;
 
 const corsOptions = {
-  origin: "http://localhost:3001",
+  // origin: "http://localhost:3001",
+  origin: "http://localhost:3000",
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -31,7 +32,7 @@ mongoose
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.error("MongoDB connection error:", err)); // Log connection errors
 
-app.get("/users", userRoutes);
+app.use("/users", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

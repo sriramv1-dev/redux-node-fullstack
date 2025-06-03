@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers } from "../reducers/usersSlice";
+import { addMultipleUsers, fetchUsers } from "../reducers/usersSlice";
 
 const UsersList = () => {
   const users = useSelector((state) => state.ur.users);
@@ -17,8 +17,13 @@ const UsersList = () => {
     return <h1>No Users found</h1>;
   }
 
+  const handleBulkExport = () => {
+    dispatch(addMultipleUsers(users));
+  };
+
   return (
     <div>
+      {/* <button onClick={handleBulkExport}>Bulk Export</button> */}
       {users.map(({ id, name, username, email }) => {
         return (
           <div key={id}>
