@@ -13,6 +13,43 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const addUser = async (req, res) => {
+  try {
+    const user = req.body.user;
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Request body must be a non-empty user",
+      });
+    }
+
+    const insertedUser = await User.create(user);
+
+    return res.status(201).json({
+      message: "User added successfully",
+      users: insertedUser,
+    });
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      return res
+        .status(400)
+        .json({ message: "Validation error", errors: error.errors });
+    }
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message:
+          "Duplicate key error: A user with the provided username or email already exists.",
+        error: error.message,
+      });
+    }
+
+    res
+      .status(500)
+      .json({ message: "Failed to add single user", error: error.message });
+  }
+};
+
 const addBulkUsers = async (req, res) => {
   try {
     const users = req.body.users;
@@ -31,7 +68,7 @@ const addBulkUsers = async (req, res) => {
       users: insertedUsers,
     });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error inserting users:", error);
 
     if (error.name === "ValidationError") {
       return res
@@ -55,5 +92,6 @@ const addBulkUsers = async (req, res) => {
 
 module.exports = {
   addBulkUsers,
+  addUser,
   getAllUsers,
 };

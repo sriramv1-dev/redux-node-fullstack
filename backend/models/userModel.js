@@ -5,11 +5,11 @@ const GeoSchema = new mongoose.Schema(
   {
     lat: {
       type: String, // Storing as String as per the example data
-      required: true,
+      // required: true,
     },
     lng: {
       type: String, // Storing as String as per the example data
-      required: true,
+      // required: true,
     },
   },
   { _id: false }
@@ -36,7 +36,7 @@ const AddressSchema = new mongoose.Schema(
     },
     geo: {
       type: GeoSchema, // Nested GeoSchema
-      required: true,
+      // required: true,
     },
   },
   { _id: false }
@@ -50,11 +50,11 @@ const CompanySchema = new mongoose.Schema(
     },
     catchPhrase: {
       type: String,
-      required: true,
+      // required: true,
     },
     bs: {
       type: String,
-      required: true,
+      // required: true,
     },
   },
   { _id: false }

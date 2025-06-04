@@ -5,7 +5,6 @@ import UsersList from "./components/usersList";
 function App() {
   return (
     <div className="App">
-      Users and Books
       {/*      <BookList />*/}
       <UsersList />
     </div>
