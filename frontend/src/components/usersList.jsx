@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addMultipleUsers, fetchUsers } from "../reducers/usersSlice";
 import AddUserForm from "./AddUser/AddUserForm";
+import Table from "./common/Table/Table";
 
 const UsersList = () => {
   const users = useSelector((state) => state.ur.users);
@@ -22,18 +23,20 @@ const UsersList = () => {
     dispatch(addMultipleUsers(users));
   };
 
+  const columns = [
+    { path: "name", label: "Name", sortable: true },
+    { path: "username", label: "Username", sortable: true },
+    { path: "email", label: "Email", sortable: true },
+    { path: "phone", label: "Phone", sortable: true },
+    { key: "delete" },
+  ];
+
   return (
     <div>
       {/* <button onClick={handleBulkExport}>Bulk Export</button> */}
-      <AddUserForm />
+      {/* <AddUserForm /> */}
       <br />
-      {users.map(({ id, name, username, email }) => {
-        return (
-          <div key={id}>
-            {name}: {username}: {email}
-          </div>
-        );
-      })}
+      <Table data={users} columns={columns} />
     </div>
   );
 };
