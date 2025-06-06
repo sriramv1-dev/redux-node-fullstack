@@ -23,12 +23,27 @@ const UsersList = () => {
     dispatch(addMultipleUsers(users));
   };
 
+  const handleDeleteUser = (user) => {
+    console.log(user);
+  };
+
   const columns = [
     { path: "name", label: "Name", sortable: true },
     { path: "username", label: "Username", sortable: true },
     { path: "email", label: "Email", sortable: true },
     { path: "phone", label: "Phone", sortable: true },
-    { key: "delete" },
+    { path: "address.city", label: "City", sortable: true },
+    {
+      key: "delete",
+      content: (user) => (
+        <button
+          onClick={() => handleDeleteUser(user)}
+          className="delete-button"
+        >
+          Delete
+        </button>
+      ),
+    },
   ];
 
   return (

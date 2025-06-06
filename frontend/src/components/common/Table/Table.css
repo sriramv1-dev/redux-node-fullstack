@@ -23,10 +23,8 @@
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
-/* Table styles */
-
 .table-container {
-  font-family: "Inter", sans-serif;
+  font-family: "Avenir Next", "Inter", sans-serif;
   margin: 20px;
   display: flex;
   justify-content: center;
@@ -34,43 +32,48 @@
   min-height: 100vh;
   background-color: #f0f2f5;
   padding: 20px;
+
+  /* Delete Button */
+  .delete-button {
+    background-color: #dc3545; /* Red for delete */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.9em;
+  }
+
+  .delete-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+  }
+
+  .delete-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
 }
 
-.data-table {
+/* Main card for the table widget */
+.table-card {
   width: 100%;
-  max-width: 800px;
-  border-collapse: collapse;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden; /* Ensures rounded corners apply to children */
+  max-width: 1200px; /* Fixed maximum width for the entire card */
   background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Ensures child rounded corners are respected */
+  margin-top: 20px;
 }
 
-.data-table th,
-.data-table td {
-  border: 1px solid #e0e0e0;
-  padding: 12px 15px;
-  text-align: left;
-}
-
-.data-table thead {
-  background-color: #4caf50; /* Green header */
-  color: white;
-}
-
-.data-table th {
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.data-table tbody tr:nth-child(even) {
-  background-color: #f9f9f9; /* Light grey for even rows */
-}
-
-.data-table tbody tr:hover {
-  background-color: #e8f5e9; /* Lighter green on hover */
-  cursor: pointer;
+.table-container {
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .table-title {
@@ -79,10 +82,82 @@
   margin-bottom: 20px;
   font-size: 2em;
   font-weight: 700;
+  padding-top: 20px;
+}
+
+/* Scrollable area for the table content */
+.table-body-scroll {
+  height: 300px; /* Fixed height for the table content to scroll */
+  overflow: auto; /* Adds scrollbars (both x and y) if content overflows */
+  width: 100%;
+  scrollbar-gutter: stable;
+}
+
+/* Table styles */
+.data-table {
+  width: 100%; /* Ensures it fills its parent's width */
+  border-collapse: collapse;
+  background-color: #ffffff;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #e0e0e0;
+  padding: 12px 15px;
+  text-align: left;
+  min-width: 120px; /* Ensure columns don't shrink too much, enabling horizontal scroll */
+}
+
+.data-table thead {
+  background-color: #4caf50;
+  color: white;
+}
+
+.data-table th {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  position: sticky; /* Make headers sticky */
+  top: 0; /* Stick to the top of the scrollable parent */
+  background-color: #4caf50; /* Ensure header color for sticky */
+  z-index: 10; /* Ensure it stays on top of scrolling content */
+  padding-right: 30px;
+}
+
+.data-table th:hover {
+  background-color: #45a049;
+}
+
+.sort-indicator {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8em;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.data-table tbody tr:hover {
+  background-color: #e8f5e9;
+  cursor: pointer;
 }
 
 /* Responsive adjustments */
+@media (max-width: 840px) {
+  /* Adjust breakpoint for table-card fixed width */
+  .table-card {
+    max-width: calc(
+      100% - 40px
+    ); /* Make the card take full available width with padding */
+  }
+}
+
 @media (max-width: 600px) {
+  /* Original mobile behavior for very small screens */
   .data-table,
   .data-table tbody,
   .data-table tr,

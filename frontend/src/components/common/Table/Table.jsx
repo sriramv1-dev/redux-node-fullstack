@@ -3,25 +3,58 @@ import Pagination from "../Pagination/Pagination";
 import "../Table/Table.css";
 import { paginate } from "../../../utils/paginate";
 
-const TableHeader = ({ columns, sortColumn, sortOrder, handleSort }) => {
+const TableHeader = ({ columns, sortColumn, sortOrder, handleSort }) => (
+  <thead>
+    <tr>
+      {columns.map(({ key, path, label, sortable = false }) => (
+        <th
+          role="button"
+          tabIndex={0}
+          key={path || key}
+          onClick={sortable ? () => handleSort(path) : undefined}
+        >
+          {label}
+          {sortColumn === path && (
+            <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
+          )}
+        </th>
+      ))}
+    </tr>
+  </thead>
+);
+
+const TableBody = ({ data, columns }) => {
+  const getNestedValue = (item, path) =>
+    path.split(".").reduce((acc, part) => acc?.[part], item);
+
+  const renderCell = (item, { path, content }) =>
+    content ? content(item) : getNestedValue(item, path);
+
+  const createKey = (item, { path, key }) => item._id + (path || key);
+
   return (
-    <thead>
-      <tr>
-        {columns.map(({ key, path, label, sortable = false }) => (
-          <th
-            key={path || key}
-            onClick={sortable ? () => handleSort(path) : undefined}
-          >
-            {label}
-            {sortColumn === path && (
-              <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
-            )}
-          </th>
-        ))}
-      </tr>
-    </thead>
+    <tbody>
+      {data.map((item) => (
+        <tr key={item._id}>
+          {columns.map((col) => (
+            <td key={createKey(item, col)}>{renderCell(item, col)}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
   );
 };
+
+const Search = ({ handleSearchInputChange }) => (
+  <div className="search-input-container">
+    <input
+      type="text"
+      placeholder="Search by any field..."
+      className="search-input"
+      onChange={handleSearchInputChange}
+    />
+  </div>
+);
 
 const Table = ({ data = [], columns = [] }) => {
   const [pageSize, setPageSize] = useState(20);
@@ -53,9 +86,7 @@ const Table = ({ data = [], columns = [] }) => {
   };
 
   const filteredData = useMemo(() => {
-    if (searchTerm && searchTerm.trim === "") {
-      return data;
-    }
+    if (searchTerm && searchTerm.trim() === "") return data;
 
     return data.filter((item) =>
       Object.values(item).some((value) =>
@@ -67,9 +98,15 @@ const Table = ({ data = [], columns = [] }) => {
   const sortedData = useMemo(() => {
     if (!sortColumn) return filteredData;
 
+    // nested properties:
+    const getValue = (obj, path) => {
+      return path.split(".").reduce((acc, part) => acc?.[part], obj);
+    };
+
     return [...filteredData].sort((a, b) => {
-      const aVal = a?.[sortColumn] ?? "";
-      const bVal = b?.[sortColumn] ?? "";
+      const aVal = getValue(a, sortColumn) ?? "";
+      const bVal = getValue(b, sortColumn) ?? "";
+
       const isString = typeof aVal === "string" && typeof bVal === "string";
 
       return sortOrder === "asc"
@@ -84,49 +121,37 @@ const Table = ({ data = [], columns = [] }) => {
 
   const paginatedData = paginate(sortedData, currentPage, pageSize);
 
-  if (data.length === 0) return <div className="table-container">No Data</div>;
-
   return (
     <div className="table-container">
-      <div className="table-wrapper">
-        <h2 className="table-title">User Data Table</h2>
-        <div className="search-input-container">
-          <input
-            type="text"
-            placeholder="Search by any field..."
-            className="search-input"
-            onChange={handleSearchInputChange}
+      {data.length === 0 ? (
+        <h4>No Data</h4>
+      ) : (
+        <div className="table-card">
+          <h2 className="table-title">User Data Table</h2>
+
+          <Search handleSearchInputChange={handleSearchInputChange} />
+
+          <div className="table-body-scroll">
+            <table className="data-table">
+              <TableHeader
+                columns={columns}
+                sortColumn={sortColumn}
+                sortOrder={sortOrder}
+                handleSort={handleSort}
+              />
+              <TableBody columns={columns} data={paginatedData} />
+            </table>
+          </div>
+
+          <Pagination
+            itemsCount={sortedData.length}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            handleItemsPerPageChange={handleItemsPerPageChange}
           />
         </div>
-        <table className="data-table">
-          <TableHeader
-            columns={columns}
-            sortColumn={sortColumn}
-            sortOrder={sortOrder}
-            handleSort={handleSort}
-          />
-          <tbody>
-            {paginatedData.map(({ _id, name, username, email, phone }) => {
-              return (
-                <tr key={`tr_${_id}`}>
-                  <td>{name}</td>
-                  <td>{username}</td>
-                  <td>{email}</td>
-                  <td>{phone}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-
-        <Pagination
-          itemsCount={sortedData.length}
-          pageSize={pageSize}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-          handleItemsPerPageChange={handleItemsPerPageChange}
-        />
-      </div>
+      )}
     </div>
   );
 };

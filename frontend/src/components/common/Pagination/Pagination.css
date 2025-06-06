@@ -3,8 +3,9 @@
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  gap: 8px;
+  gap: 4px;
   flex-wrap: wrap; /* Allow wrapping on small screens */
+  padding-bottom: 10px;
 }
 
 .pagination-button {
