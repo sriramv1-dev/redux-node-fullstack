@@ -16,12 +16,6 @@ const Pagination = ({
   const start = currentChunk * maxVisible + 1;
   const end = Math.min(start + maxVisible - 1, pagesCount);
 
-  console.log({
-    currentChunk,
-    start,
-    end,
-  });
-
   return (
     <div className="pagination-controls">
       {pagesCount > 1 && (

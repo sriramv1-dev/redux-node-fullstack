@@ -93,6 +93,10 @@ const UserSchema = mongoose.Schema(
       type: CompanySchema, // Nested CompanySchema
       // required: true,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true, // Mongoose will automatically add `createdAt` and `updatedAt` fields

@@ -2,7 +2,12 @@ const User = require("../models/userModel");
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({});
+    // Since we didn't have isActiveProperty on the existing records, we have to take that into consideration:
+
+    // const users = await User.find({ isActive: true });
+    const users = await User.find({
+      $or: [{ isActive: true }, { isActive: { $exists: false } }],
+    });
 
     return res.status(200).json(users);
   } catch (error) {
@@ -50,6 +55,40 @@ const addUser = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedFields = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        message: "Request body must be a non-empty userId",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        $set: { ...updatedFields, updatedAt: Date.now() },
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "User soft-deleted successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch users", error: error.message });
+  }
+};
+
 const addBulkUsers = async (req, res) => {
   try {
     const users = req.body.users;
@@ -93,5 +132,6 @@ const addBulkUsers = async (req, res) => {
 module.exports = {
   addBulkUsers,
   addUser,
+  updateUser,
   getAllUsers,
 };

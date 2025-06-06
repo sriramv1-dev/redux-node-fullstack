@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addMultipleUsers, fetchUsers } from "../reducers/usersSlice";
+import {
+  addMultipleUsers,
+  deleteUser,
+  fetchUsers,
+} from "../reducers/usersSlice";
 import AddUserForm from "./AddUser/AddUserForm";
 import Table from "./common/Table/Table";
 
@@ -25,6 +29,7 @@ const UsersList = () => {
 
   const handleDeleteUser = (user) => {
     console.log(user);
+    dispatch(deleteUser(user._id));
   };
 
   const columns = [
