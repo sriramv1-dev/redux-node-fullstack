@@ -24,10 +24,20 @@ export const fetchUsers = createAsyncThunk(
 
 export const fetchUsersWithPagination = createAsyncThunk(
   "users/fetchUsersWithPagination",
-  async ({ page = 1, limit = 10, searchText = null }, { rejectWithValue }) => {
+  async (
+    { page = 1, limit = 10, searchText = null, sortColumn, sortOrder = "asc" },
+    { rejectWithValue }
+  ) => {
     try {
-      const search = searchText ? `&search=${searchText}` : "";
-      const url = `${API_BASE_URL}/uers/paginated?q=page${page}&limit=${limit}${search}`;
+      const search = searchText
+        ? `&search=${encodeURIComponent(searchText)}`
+        : "";
+
+      const sort = sortColumn
+        ? `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+        : "";
+
+      const url = `${API_BASE_URL}/users/paginated?page=${page}&limit=${limit}${search}${sort}`;
       const res = await fetch(url);
 
       if (!res.ok) {
@@ -132,6 +142,14 @@ const usersSlice = createSlice({
   name: "users",
   initialState: {
     users: [],
+    totalUsers: 0,
+    totalPages: 0,
+    currentPage: 1,
+    itemsPerPage: 10,
+    sortColumn: "name",
+    sortOrder: "asc",
+    searchTerm: "",
+
     status: "idle",
     error: null,
     addUsersStatus: "idle", // 'idle' | 'loading' | 'succeeded' | 'rejected' for add operation
@@ -143,7 +161,21 @@ const usersSlice = createSlice({
     deleteUserStatus: "idle",
     deleteUserError: null,
   },
-  reducers: {},
+  reducers: {
+    setPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+    setItemsPerPage: (state, action) => {
+      state.itemsPerPage = action.payload;
+    },
+    setSearchTerm: (state, action) => {
+      state.searchTerm = action.payload;
+    },
+    setSort: (state, action) => {
+      state.sortColumn = action.sortColumn;
+      state.sortOrder = action.sortOrder;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUsers.pending, (state) => {
@@ -164,7 +196,17 @@ const usersSlice = createSlice({
       })
       .addCase(fetchUsersWithPagination.fulfilled, (state, action) => {
         state.status = "succeeded";
-        // state.users = action.payload;
+
+        const {
+          users,
+          meta: { totalUsers, totalPages, currentPage, itemsPerPage },
+        } = action.payload;
+
+        state.users = users;
+        state.totalUsers = totalUsers;
+        state.totalPages = totalPages;
+        state.currentPage = currentPage;
+        state.itemsPerPage = itemsPerPage;
       })
       .addCase(fetchUsersWithPagination.rejected, (state, action) => {
         state.status = "rejected";
@@ -217,5 +259,6 @@ const usersSlice = createSlice({
   },
 });
 
-// export const {  } = usersSlice.actions;
+export const { setPage, setItemsPerPage, setSearchTerm, setSort } =
+  usersSlice.actions;
 export default usersSlice.reducer;

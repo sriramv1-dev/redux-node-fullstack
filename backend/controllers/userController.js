@@ -24,6 +24,8 @@ const getAllUsersWithPagination = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const search = req.query.search?.trim() || "";
+    const sortColumn = req.query.sortColumn?.trim() || "";
+    const sortOrder = req.query.sortOrder?.trim() || "asc";
 
     // calculate the number of documents to skip:
     const skip = (page - 1) * limit;
@@ -40,7 +42,6 @@ const getAllUsersWithPagination = async (req, res) => {
       filter = {
         $and: [
           baseFilter,
-          { $or: [{ isActive: true }, { isActive: { $exists: false } }] },
           {
             $or: [
               { name: searchRegex },
@@ -59,10 +60,24 @@ const getAllUsersWithPagination = async (req, res) => {
     const totalUsers = await User.countDocuments(filter);
 
     // Fetch the users for the current page
+
+    const allowedSortColumns = [
+      "name",
+      "email",
+      "username",
+      "address.city",
+      "createdAt",
+    ];
+
+    let sColumn = sortColumn;
+    if (!allowedSortColumns.includes(sortColumn)) {
+      sColumn = "createdAt";
+    }
+
     const paginatedUsers = await User.find(filter)
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ [sColumn]: sortOrder === "asc" ? 1 : -1 });
 
     // Calculate total pages
     const totalPages = Math.ceil(totalUsers / limit);
@@ -70,10 +85,12 @@ const getAllUsersWithPagination = async (req, res) => {
     // Return the paginated data with total counts
     return res.status(200).json({
       users: paginatedUsers,
-      totalUsers,
-      totalPages,
-      currentPage: page,
-      itemsPerPage: limit,
+      meta: {
+        totalUsers,
+        totalPages,
+        currentPage: page,
+        itemsPerPage: limit,
+      },
     });
   } catch (error) {
     console.error("getAllUsersWithPagination", error);

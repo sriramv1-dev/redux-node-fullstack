@@ -84,6 +84,8 @@ const Pagination = ({
           </option>
         ))}
       </select>
+
+      <h4>count: {itemsCount}</h4>
     </div>
   );
 };
