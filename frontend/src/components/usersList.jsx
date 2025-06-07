@@ -6,7 +6,7 @@ import {
   fetchUsers,
 } from "../reducers/usersSlice";
 import AddUserForm from "./AddUser/AddUserForm";
-import Table from "./common/Table/Table";
+import Table from "./common/Table_client_side/Table";
 
 const UsersList = () => {
   const users = useSelector((state) => state.ur.users);

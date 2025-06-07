@@ -18,6 +18,72 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const getAllUsersWithPagination = async (req, res) => {
+  try {
+    //  Get pagination parameters from query string
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search?.trim() || "";
+
+    // calculate the number of documents to skip:
+    const skip = (page - 1) * limit;
+
+    //create the filter
+    const baseFilter = {
+      $or: [{ isActive: true }, { isActive: { $exists: false } }],
+    };
+
+    let filter;
+
+    if (search) {
+      const searchRegex = new RegExp(search, "i"); // i: case insensitive
+      filter = {
+        $and: [
+          baseFilter,
+          { $or: [{ isActive: true }, { isActive: { $exists: false } }] },
+          {
+            $or: [
+              { name: searchRegex },
+              { email: searchRegex },
+              { username: searchRegex },
+              { "address.city": searchRegex },
+            ],
+          },
+        ],
+      };
+    } else {
+      filter = baseFilter;
+    }
+
+    // get total users count
+    const totalUsers = await User.countDocuments(filter);
+
+    // Fetch the users for the current page
+    const paginatedUsers = await User.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    // Return the paginated data with total counts
+    return res.status(200).json({
+      users: paginatedUsers,
+      totalUsers,
+      totalPages,
+      currentPage: page,
+      itemsPerPage: limit,
+    });
+  } catch (error) {
+    console.error("getAllUsersWithPagination", error);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
 const addUser = async (req, res) => {
   try {
     const user = req.body.user;
@@ -134,4 +200,5 @@ module.exports = {
   addUser,
   updateUser,
   getAllUsers,
+  getAllUsersWithPagination,
 };
