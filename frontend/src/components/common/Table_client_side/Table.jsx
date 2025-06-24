@@ -157,3 +157,42 @@ const Table = ({ data = [], columns = [] }) => {
 };
 
 export default Table;
+
+/**
+ *
+ * Movie management app:
+ * Display the movies
+ * Each movie has director, genre, music,production, releaseYear, title
+ * in future there will new objects for director, genre, music, production, hero, heroine, cinematography, etc.
+ * Need scope to expand the movie to include these future connections
+ * My data is currently in Google firebase. Do you suggest any other database?
+ * If yes, then which one?
+ * If no then how to design the database efficiently?
+ *
+ * I want to implement below features:
+ * View all movies, CRUD operations on each movie.
+ * Scope to expand this for future new objects.
+ *
+ * Center of the app is the playground:
+ * where we play dumbcharades.
+ * These movies are in Telugu language.
+ * when the play starts, we randomly select a movie, for the user to enact it.
+ * Having a timer is optional, they can play as their wish.
+ *
+ * the crux of the thing is we need to be able to rate the movie based on enactment.
+ * The app should be able to learn and update the rating (how to design that??/)
+ *
+ * we can have the settings app to control the time of play,
+ * Difficulty rating
+ * Provide a hint on how to enact.
+ * More features to come.
+ *
+ *
+ * Add different roles to the app:
+ * Admin, AuthenticatedPlayer,  Player mode:
+ * Admin: Logged in with previlages who can perform all the operations
+ * AuthenticatedPlayer: can view all the movies, (future objects like music, production, etc.)
+ * Player: has access only to the playground.
+ *
+ *
+ */

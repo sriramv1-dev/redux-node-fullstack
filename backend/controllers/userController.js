@@ -1,10 +1,9 @@
 const User = require("../models/userModel");
+const userService = require("../services/userService");
 
 const getAllUsers = async (req, res) => {
   try {
     // Since we didn't have isActiveProperty on the existing records, we have to take that into consideration:
-
-    // const users = await User.find({ isActive: true });
     const users = await User.find({
       $or: [{ isActive: true }, { isActive: { $exists: false } }],
     });
@@ -27,77 +26,23 @@ const getAllUsersWithPagination = async (req, res) => {
     const sortColumn = req.query.sortColumn?.trim() || "";
     const sortOrder = req.query.sortOrder?.trim() || "asc";
 
-    // calculate the number of documents to skip:
-    const skip = (page - 1) * limit;
+    const result = await userService.getUsersWithPagination({
+      page,
+      limit,
+      search,
+      sortColumn,
+      sortOrder,
+    });
 
-    //create the filter
-    const baseFilter = {
-      $or: [{ isActive: true }, { isActive: { $exists: false } }],
-    };
-
-    let filter;
-
-    if (search) {
-      const searchRegex = new RegExp(search, "i"); // i: case insensitive
-      filter = {
-        $and: [
-          baseFilter,
-          {
-            $or: [
-              { name: searchRegex },
-              { email: searchRegex },
-              { username: searchRegex },
-              { "address.city": searchRegex },
-            ],
-          },
-        ],
-      };
-    } else {
-      filter = baseFilter;
-    }
-
-    // get total users count
-    const totalUsers = await User.countDocuments(filter);
-
-    // Fetch the users for the current page
-
-    const allowedSortColumns = [
-      "name",
-      "email",
-      "username",
-      "address.city",
-      "createdAt",
-    ];
-
-    let sColumn = sortColumn;
-    if (!allowedSortColumns.includes(sortColumn)) {
-      sColumn = "createdAt";
-    }
-
-    const paginatedUsers = await User.find(filter)
-      .skip(skip)
-      .limit(limit)
-      .sort({ [sColumn]: sortOrder === "asc" ? 1 : -1 });
-
-    // Calculate total pages
-    const totalPages = Math.ceil(totalUsers / limit);
-
-    // Return the paginated data with total counts
     return res.status(200).json({
-      users: paginatedUsers,
-      meta: {
-        totalUsers,
-        totalPages,
-        currentPage: page,
-        itemsPerPage: limit,
-      },
+      status: "success",
+      data: result.users,
+      meta: result.meta,
     });
   } catch (error) {
-    console.error("getAllUsersWithPagination", error);
-
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch users", error: error.message });
   }
 };
 
@@ -115,7 +60,7 @@ const addUser = async (req, res) => {
 
     return res.status(201).json({
       message: "User added successfully",
-      users: insertedUser,
+      user: insertedUser,
     });
   } catch (error) {
     if (error.name === "ValidationError") {

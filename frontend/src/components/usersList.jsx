@@ -28,7 +28,6 @@ const UsersList = () => {
   };
 
   const handleDeleteUser = (user) => {
-    console.log(user);
     dispatch(deleteUser(user._id));
   };
 

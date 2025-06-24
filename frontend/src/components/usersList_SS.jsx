@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addMultipleUsers,
@@ -24,6 +24,8 @@ const UsersList_SS = () => {
     searchTerm,
   } = useSelector((state) => state.ur);
 
+  const [showForm, setShowForm] = useState(false);
+
   const userStatus = useSelector((state) => state.ur.status);
   const dispatch = useDispatch();
 
@@ -32,7 +34,6 @@ const UsersList_SS = () => {
   };
 
   const handleDeleteUser = (user) => {
-    console.log(user);
     dispatch(deleteUser(user._id));
   };
 
@@ -67,15 +68,21 @@ const UsersList_SS = () => {
     },
   ];
 
-  // if (users && users.length === 0) {
-  //   return <h1>No Users found</h1>;
-  // }
+  const handleAddUser = () => {
+    setShowForm(true);
+  };
 
   return (
     <div>
       {/* <button onClick={handleBulkExport}>Bulk Export</button> */}
-      {/* <AddUserForm /> */}
-      <br />
+      <button onClick={handleAddUser}>Add User</button>
+      {showForm && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <AddUserForm closeModal={() => setShowForm(false)} />
+          </div>
+        </div>
+      )}
       <ServerSideTable
         title="User Data Table"
         data={users}

@@ -62,7 +62,7 @@ export const addUser = createAsyncThunk(
   "users/addUser",
   async (user, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/users/addUser`, {
+      const res = await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -172,8 +172,8 @@ const usersSlice = createSlice({
       state.searchTerm = action.payload;
     },
     setSort: (state, action) => {
-      state.sortColumn = action.sortColumn;
-      state.sortOrder = action.sortOrder;
+      state.sortColumn = action.payload.sortColumn;
+      state.sortOrder = action.payload.sortOrder;
     },
   },
   extraReducers: (builder) => {
@@ -198,11 +198,11 @@ const usersSlice = createSlice({
         state.status = "succeeded";
 
         const {
-          users,
+          data,
           meta: { totalUsers, totalPages, currentPage, itemsPerPage },
         } = action.payload;
 
-        state.users = users;
+        state.users = data;
         state.totalUsers = totalUsers;
         state.totalPages = totalPages;
         state.currentPage = currentPage;

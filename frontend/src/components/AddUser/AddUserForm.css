@@ -265,3 +265,33 @@ body {
 .message-icon {
   font-size: 1.25rem; /* Adjust icon size if needed */
 }
+
+.modal-close-button {
+  position: absolute; /* Positions the button relative to its first positioned ancestor */
+  top: 1rem; /* 16px from the top of the parent container */
+  right: 1rem; /* 16px from the right of the parent container */
+  background-color: #e5e7eb; /* Light gray background */
+  color: #4b5563; /* Darker gray for the '✖' icon */
+  border: none; /* Removes any default border */
+  border-radius: 9999px; /* Makes the button perfectly circular */
+  width: 2rem; /* Fixed width of 32px */
+  height: 2rem; /* Fixed height of 32px */
+  display: flex; /* Enables flexbox for easy centering of content */
+  align-items: center; /* Vertically centers the content within the button */
+  justify-content: center; /* Horizontally centers the content within the button */
+  font-size: 1.125rem; /* Sets the font size of the '✖' to 18px */
+  font-weight: 700; /* Makes the '✖' bold */
+  cursor: pointer; /* Changes cursor to a pointer on hover, indicating it's clickable */
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for color and shadow changes */
+  z-index: 10; /* Ensures the button is layered above other content if necessary */
+}
+
+.modal-close-button:hover {
+  background-color: #d1d5db; /* Darker gray background on hover */
+  color: #111827; /* Even darker gray text on hover */
+}
+
+.modal-close-button:focus {
+  outline: none; /* Removes the default browser outline on focus */
+  box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.75); /* Adds a gray ring shadow on focus for accessibility */
+}
