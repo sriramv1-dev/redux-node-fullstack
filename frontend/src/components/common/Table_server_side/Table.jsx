@@ -1,7 +1,5 @@
-import { useMemo, useState } from "react";
 import Pagination from "../Pagination/Pagination";
 import "./Table.css";
-import { paginate } from "../../../utils/paginate";
 
 const TableHeader = ({ columns, sortColumn, sortOrder, handleSort }) => (
   <thead>

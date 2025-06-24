@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addMultipleUsers,
+  // addMultipleUsers,
   deleteUser,
   fetchUsersWithPagination,
   setItemsPerPage,
@@ -12,7 +12,7 @@ import {
 import AddUserForm from "./AddUser/AddUserForm";
 import ServerSideTable from "./common/Table_server_side/Table";
 
-const UsersList_SS = () => {
+const UsersListServerSide = () => {
   const {
     users,
     totalUsers,
@@ -26,12 +26,12 @@ const UsersList_SS = () => {
 
   const [showForm, setShowForm] = useState(false);
 
-  const userStatus = useSelector((state) => state.ur.status);
+  // const userStatus = useSelector((state) => state.ur.status);
   const dispatch = useDispatch();
 
-  const handleBulkExport = () => {
-    dispatch(addMultipleUsers(users));
-  };
+  // const handleBulkExport = () => {
+  //   dispatch(addMultipleUsers(users));
+  // };
 
   const handleDeleteUser = (user) => {
     dispatch(deleteUser(user._id));
@@ -104,4 +104,4 @@ const UsersList_SS = () => {
   );
 };
 
-export default UsersList_SS;
+export default UsersListServerSide;

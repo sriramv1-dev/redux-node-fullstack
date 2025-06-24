@@ -1,14 +1,10 @@
 import "./App.css";
-import BookList from "./components/booksList";
-import UsersList from "./components/usersList";
-import UsersList_SS from "./components/usersList_SS";
+import UsersListServerSide from "./components/usersListServerSide";
 
 function App() {
   return (
     <div className="App">
-      {/*      <BookList />*/}
-      {/* <UsersList /> */}
-      <UsersList_SS />
+      <UsersListServerSide />
     </div>
   );
 }

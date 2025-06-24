@@ -5,7 +5,6 @@ import {
   deleteUser,
   fetchUsers,
 } from "../reducers/usersSlice";
-import AddUserForm from "./AddUser/AddUserForm";
 import Table from "./common/Table_client_side/Table";
 
 const UsersList = () => {
@@ -23,9 +22,9 @@ const UsersList = () => {
     return <h1>No Users found</h1>;
   }
 
-  const handleBulkExport = () => {
-    dispatch(addMultipleUsers(users));
-  };
+  // const handleBulkExport = () => {
+  //   dispatch(addMultipleUsers(users));
+  // };
 
   const handleDeleteUser = (user) => {
     dispatch(deleteUser(user._id));
