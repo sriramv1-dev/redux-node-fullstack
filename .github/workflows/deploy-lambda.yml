@@ -7,8 +7,8 @@ on:
     branches:
       - main # IMPORTANT: Change to 'master' or your main development branch if different
     # OPTIONAL: Only run if changes are detected in the 'backend/' directory
-    # paths:
-    #   - 'backend/**'
+    paths:
+      - "backend/**"
 
 jobs:
   deploy:

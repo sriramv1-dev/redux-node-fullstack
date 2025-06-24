@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main # Trigger on pushes to the 'main' branch
+    paths:
+      - "frontend/**" # <-- This means "any change inside the frontend/ directory"
 
 jobs:
   deploy:
