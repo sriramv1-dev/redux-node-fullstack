@@ -1,6 +1,6 @@
 # .github/workflows/deploy-lambda.yml
 
-name: Deploy Node.js Lambda Backend to AWS
+name: Deploy Node.js Lambda Backend to AWS (AWS CLI Method)
 
 on:
   push:
@@ -21,16 +21,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.x" # IMPORTANT: Ensure this matches your Lambda runtime
+          node-version: "20.x" # IMPORTANT: Ensure this matches your Lambda runtime [cite: Screenshot 2025-06-24 at 12.50.38 AM.png]
 
       - name: Install backend dependencies
-        # This step runs 'npm install --production' within your 'backend/' directory.
         run: npm install --production
         working-directory: backend/ # IMPORTANT: Replace 'backend/' with your actual backend folder name
 
       - name: Create backend deployment package
-        # This zips the contents of your 'backend/' folder into a 'deployment-package.zip'
-        # file located at the root of the GitHub Actions runner's workspace.
         run: |
           zip -r ../deployment-package.zip . -x "*.env*"
         working-directory: backend/ # IMPORTANT: Replace 'backend/' with your actual backend folder name
@@ -40,13 +37,18 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 # IMPORTANT: Change to your AWS region (e.g., us-east-1)
+          aws-region: us-east-1 # IMPORTANT: Change to your AWS region (e.g., us-east-1) [cite: Screenshot 2025-06-24 at 12.56.23 AM.png]
 
-      - name: Update Lambda function code
-        uses: aws-actions/aws-lambda-update-function@v2
-        with:
-          function-name: MyNodeExpressApiFunction # IMPORTANT: Your Lambda function's exact name
-          zip-file: deployment-package.zip # The name of the zip file created above
+      - name: Update Lambda function code using AWS CLI
+        # This step directly calls the AWS CLI command to update the Lambda function.
+        # It's generally very reliable.
+        run: |
+          aws lambda update-function-code \
+            --function-name MyNodeExpressApiFunction \
+            --zip-file fileb://deployment-package.zip \
+            --region us-east-1 # IMPORTANT: Ensure this matches your AWS region
+        # The 'deployment-package.zip' is located at the root level of the workspace
+        # because of how we created it in the 'Create backend deployment package' step.
 
       - name: Verify Deployment (Optional)
-        run: echo "Lambda backend deployed successfully!"
+        run: echo "Lambda backend deployed successfully using AWS CLI!"
