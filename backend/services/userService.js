@@ -58,7 +58,7 @@ const getUsersWithPagination = async (params) => {
     const users = await userRepo.findUsers(filter, {
       skip,
       limit,
-      sort: { [sortColumn]: sortOrder === "asc" ? 1 : -1 },
+      sort: { [sColumn]: sortOrder === "asc" ? 1 : -1 },
     });
 
     return {
