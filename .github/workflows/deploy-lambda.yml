@@ -1,0 +1,52 @@
+# .github/workflows/deploy-lambda.yml
+
+name: Deploy Node.js Lambda Backend to AWS
+
+on:
+  push:
+    branches:
+      - main # IMPORTANT: Change to 'master' or your main development branch if different
+    # OPTIONAL: Only run if changes are detected in the 'backend/' directory
+    # paths:
+    #   - 'backend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x" # IMPORTANT: Ensure this matches your Lambda runtime
+
+      - name: Install backend dependencies
+        # This step runs 'npm install --production' within your 'backend/' directory.
+        run: npm install --production
+        working-directory: backend/ # IMPORTANT: Replace 'backend/' with your actual backend folder name
+
+      - name: Create backend deployment package
+        # This zips the contents of your 'backend/' folder into a 'deployment-package.zip'
+        # file located at the root of the GitHub Actions runner's workspace.
+        run: |
+          zip -r ../deployment-package.zip . -x "*.env*"
+        working-directory: backend/ # IMPORTANT: Replace 'backend/' with your actual backend folder name
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # IMPORTANT: Change to your AWS region (e.g., us-east-1)
+
+      - name: Update Lambda function code
+        uses: aws-actions/aws-lambda-update-function@v2
+        with:
+          function-name: MyNodeExpressApiFunction # IMPORTANT: Your Lambda function's exact name
+          zip-file: deployment-package.zip # The name of the zip file created above
+
+      - name: Verify Deployment (Optional)
+        run: echo "Lambda backend deployed successfully!"
