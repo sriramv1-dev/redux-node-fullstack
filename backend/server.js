@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: allowedOrigin,
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
