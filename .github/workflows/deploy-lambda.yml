@@ -9,6 +9,7 @@ on:
     # OPTIONAL: Only run if changes are detected in the 'backend/' directory
     paths:
       - "backend/**"
+  workflow_dispatch: {}
 
 jobs:
   deploy:
